@@ -23,7 +23,7 @@ const router = createRouter({
       component: UserRegisterPage,
     },
     {
-      path: '/admin/userMange',
+      path: '/admin/userManage',
       name: '用户管理',
       component: UserMangePage,
     },

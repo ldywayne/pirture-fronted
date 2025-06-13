@@ -1,4 +1,4 @@
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted, computed } from 'vue';
 import { listUserVoByPageUsingPost } from '@/api/userController';
 import { message } from 'ant-design-vue';
 
@@ -61,7 +61,7 @@ export default function () {
     })
     if (res.data.data) {
       dataList.value = res.data.data.records ?? []
-      total.value = res.data.data.total ?? 0
+      total.value = Number(res.data.data.total) || 0
     } else {
       message.error('获取数据失败，' + res.data.message)
     }
@@ -78,6 +78,18 @@ export default function () {
     }
   })
 
+  // 获取数据
+  const doSearch = () => {
+    // 重置页码
+    searchParams.current = 1
+    fetchData()
+  }
+  // 重置
+  const doReset = () => {
+    searchParams.userAccount = ''
+    searchParams.userName = ''
+    doSearch()
+  }
   // 表格变化处理
   const doTableChange = (page: any) => {
     searchParams.current = page.current
@@ -90,5 +102,5 @@ export default function () {
     fetchData()
   })
 
-  return { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination }
+  return { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset }
 }

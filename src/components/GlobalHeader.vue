@@ -53,15 +53,16 @@
 
 </template>
 <script lang="ts" setup>
-import { h, ref } from 'vue'
+import { h, ref, computed } from 'vue'
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
-import { useLoginUserStore, } from '@/stores/userLoginUserStore.ts'
+import { useLoginUserStore } from '@/stores/userLoginUserStore.ts'
 import { message } from 'ant-design-vue'
 import { userLogoutUsingPost } from '@/api/userController.ts'
 const loginUserLogin = useLoginUserStore()
-const items = ref<MenuProps['items']>([
+// 菜单列表
+const originItems = [
   {
     key: '/',
     icon: () => h(HomeOutlined),
@@ -69,16 +70,33 @@ const items = ref<MenuProps['items']>([
     title: '主页',
   },
   {
-    key: '/about',
-    label: '关于',
-    title: '关于',
+    key: '/admin/userManage',
+    label: '用户管理',
+    title: '用户管理',
   },
   {
     key: 'others',
     label: h('a', { href: 'https://www.codefather.cn', target: '_blank' }, '编程导航'),
-    title: 'ldy',
+    title: '编程导航',
   },
-])
+]
+
+// 过滤菜单项
+const filterMenus = (menus = [] as MenuProps['items']) => {
+  return menus?.filter((menu) => {
+    if (typeof menu?.key === 'string' && menu.key.startsWith('/admin')) {
+      const loginUser = loginUserLogin.loginUser
+      if (!loginUser || loginUser.userRole !== "admin") {
+        return false
+      }
+    }
+    return true
+  })
+}
+
+// 展示在菜单的路由数组
+const items = computed<MenuProps['items']>(() => filterMenus(originItems))
+
 
 
 const router = useRouter();

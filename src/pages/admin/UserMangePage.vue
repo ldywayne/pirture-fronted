@@ -1,54 +1,63 @@
 <template>
   <div id="homePage">
-    <template>
-      <a-table :columns="infoData.columns" :data-source="dataList" :pagination="pagination" @change="doTableChange">
-        <template #headerCell="{ column }">
-          <template v-if="column.key === 'name'">
-            <span>
-              <smile-outlined />
-              Name
-            </span>
-          </template>
+    <a-form layout="inline" :model="searchParams" @finish="doSearch" style="margin-bottom: 16px;">
+      <a-form-item label="账号">
+        <a-input v-model:value="searchParams.userAccount" placeholder="输入账号" />
+      </a-form-item>
+      <a-form-item label="用户名">
+        <a-input v-model:value="searchParams.userName" placeholder="输入用户名" />
+      </a-form-item>
+      <a-form-item>
+        <a-space>
+          <a-button type="primary" html-type="submit">搜索</a-button>
+          <a-button @click="doReset">重置</a-button>
+        </a-space>
+      </a-form-item>
+    </a-form>
+    <a-table :columns="infoData.columns" :data-source="dataList" :pagination="pagination" @change="doTableChange">
+      <template #headerCell="{ column }">
+        <template v-if="column.key === 'name'">
+          <span>
+            <smile-outlined />
+            Name
+          </span>
         </template>
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'name'">
-            <a>
-              {{ record.name }}
-            </a>
-          </template>
-          <template v-else-if="column.key === 'tags'">
-            <span>
-              <a-tag v-for="tag in record.tags" :key="tag"
-                :color="tag === 'loser' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'">
-                {{ tag.toUpperCase() }}
-              </a-tag>
-            </span>
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <span>
-              <a>Invite 一 {{ record.name }}</a>
-              <a-divider type="vertical" />
-              <a>Delete</a>
-              <a-divider type="vertical" />
-              <a class="ant-dropdown-link">
-                More actions
-                <down-outlined />
-              </a>
-            </span>
-          </template>
+      </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'userAvatar'">
+          <a-image :src="record.userAvatar" :width="120" />
         </template>
-      </a-table>
-    </template>
+        <template v-else-if="column.dataIndex === 'userRole'">
+          <div v-if="record.userRole === 'admin'">
+            <a-tag color="green">管理员</a-tag>
+          </div>
+          <div v-else>
+            <a-tag color="blue">普通用户</a-tag>
+          </div>
+        </template>
+        <template v-else-if="column.dataIndex === 'createTime'">
+          {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
+        </template>
+        <template v-else-if="column.key === 'action'">
+          <a-button danger>删除</a-button>
+        </template>
+      </template>
+    </a-table>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { SmileOutlined } from '@ant-design/icons-vue'
 import UserMangePage from '@/hooks/UserMangePage'
-const { infoData, doTableChange, fetchData, searchParams, pagination, dataList, total } = UserMangePage()
+import dayjs from 'dayjs'
+
+const { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset } = UserMangePage()
 const data = ref(infoData.columns)
 </script>
 
 <style scoped>
-#homePage {}
+#homePage {
+  padding: 16px;
+}
 </style>
