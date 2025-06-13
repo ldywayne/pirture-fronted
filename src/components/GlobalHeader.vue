@@ -17,7 +17,32 @@
 
       <a-col flex="120px">
         <div class="user-login-status">
-          <a-button type="primary" href="/user/login">登录</a-button>
+
+          <div v-if="loginUserLogin.loginUser.id">
+            <a-dropdown>
+              <ASpace>
+                <a-avatar :src="loginUserLogin.loginUser.userAvatar" />
+                {{ loginUserLogin.loginUser.userAccount ?? '无名' }}
+              </ASpace>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item @click="doLogout">
+                    <LogoutOutlined />
+                    退出登录
+                  </a-menu-item>
+                  <a-menu-item @click="">
+                    <!-- <LogoutOutlined /> -->
+                    个人信息
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </div>
+
+          <div v-else>
+            <a-button type="primary" href="/user/login">登录</a-button>
+          </div>
+
         </div>
       </a-col>
     </a-row>
@@ -29,11 +54,13 @@
 </template>
 <script lang="ts" setup>
 import { h, ref } from 'vue'
-import { HomeOutlined } from '@ant-design/icons-vue'
+import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import type { MenuProps } from 'ant-design-vue';
 import { useRouter } from 'vue-router';
-
-
+import { useLoginUserStore, } from '@/stores/userLoginUserStore.ts'
+import { message } from 'ant-design-vue'
+import { userLogoutUsingPost } from '@/api/userController.ts'
+const loginUserLogin = useLoginUserStore()
 const items = ref<MenuProps['items']>([
   {
     key: '/',
@@ -68,6 +95,25 @@ router.afterEach((to, from, next) => {
   current.value = [to.path];
 });
 
+const doLogout = async () => {
+  const res = await userLogoutUsingPost()
+  console.log(res);
+
+  if (res.data.code === 0) {
+    loginUserLogin.setLoginUser({
+      userAccount: '未登录',
+      userName: '未登录',
+      // userAvatar: '',
+    })
+    await router.push({
+      path: '/user/login',
+      replace: true,
+    })
+    message.success('退出成功')
+  } else {
+    message.error('退出失败，' + res.data.message)
+  }
+}
 </script>
 
 <style scoped>
