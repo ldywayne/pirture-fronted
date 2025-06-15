@@ -39,7 +39,8 @@
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
         <template v-else-if="column.key === 'action'">
-          <a-button danger>删除</a-button>
+          <a-button type="primary" @click="doEdit(record)" style="margin-right: 16px;">编辑</a-button>
+          <a-button danger @click="doDelete(record.id)">删除</a-button>
         </template>
       </template>
     </a-table>
@@ -51,9 +52,10 @@ import { ref } from 'vue'
 import { SmileOutlined } from '@ant-design/icons-vue'
 import UserMangePage from '@/hooks/UserMangePage'
 import dayjs from 'dayjs'
+import { message } from 'ant-design-vue';
 
-const { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset } = UserMangePage()
-const data = ref(infoData.columns)
+const { infoData, dataList, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit } = UserMangePage()
+
 </script>
 
 <style scoped>

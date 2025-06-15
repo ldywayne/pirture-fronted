@@ -8,6 +8,7 @@ let firstFetchLoginUser = true;
 /**
  * 全局权限校验
  */
+//路由守卫
 router.beforeEach(async (to, from, next) => {
   const loginUserStore = useLoginUserStore()
   let loginUser = loginUserStore.loginUser

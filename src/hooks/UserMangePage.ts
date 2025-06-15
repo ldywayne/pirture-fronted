@@ -1,5 +1,5 @@
 import { reactive, ref, onMounted, computed } from 'vue';
-import { listUserVoByPageUsingPost } from '@/api/userController';
+import { listUserVoByPageUsingPost, deleteUserUsingPost } from '@/api/userController';
 import { message } from 'ant-design-vue';
 
 export default function () {
@@ -96,11 +96,34 @@ export default function () {
     searchParams.pageSize = page.pageSize
     fetchData()
   }
+  // 编辑
+  const doEdit = async (record: any) => {
+    if (!record) {
+      return
+    }
+    message.info('编辑用户：' + record.userName)
+  }
+
+  // 删除数据
+  const doDelete = async (id: string) => {
+    if (!id) {
+      return
+    }
+    const res = await deleteUserUsingPost({ id: Number(id) })
+    if (res.data.code === 0) {
+      message.success('删除成功')
+      // 刷新数据
+      fetchData()
+    } else {
+      message.error('删除失败')
+    }
+  }
+
 
   // 页面加载时请求一次
   onMounted(() => {
     fetchData()
   })
 
-  return { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset }
+  return { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit }
 }
