@@ -81,6 +81,7 @@ import { onMounted } from 'vue'
 import { useLoginUserStore } from '@/stores/userLoginUserStore'
 import { useRouter } from 'vue-router'
 import { deletePictureUsingPost } from '@/api/pictureController'
+import { saveAs } from 'file-saver'
 // 格式化文件大小的工具函数
 const formatSize = (bytes: number) => {
   if (!bytes) return '-'
@@ -164,13 +165,7 @@ const downloadImage = (url?: string, fileName?: string) => {
   if (!url) {
     return
   }
-  // 创建一个临时的a标签用于下载
-  const link = document.createElement('a')
-  link.href = url
-  link.download = fileName || url.split('/').pop() || 'download'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  saveAs(url, fileName)
 }
 
 
