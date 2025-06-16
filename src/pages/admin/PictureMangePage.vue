@@ -17,22 +17,31 @@
     <a-table :columns="infoData.columns" :data-source="dataList" :pagination="pagination" @change="doTableChange">
 
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'pictureAvatar'">
-          <a-image :src="record.pictureAvatar" :width="120" />
+        <template v-if="column.dataIndex === 'url'">
+          <a-image :src="record.url" :width="120" />
         </template>
-        <template v-else-if="column.dataIndex === 'pictureRole'">
-          <div v-if="record.pictureRole === 'admin'">
-            <a-tag color="green">管理员</a-tag>
-          </div>
-          <div v-else>
-            <a-tag color="blue">普通用户</a-tag>
-          </div>
+        <!-- 标签 -->
+        <template v-if="column.dataIndex === 'tags'">
+          <a-space wrap>
+            <a-tag v-for="tag in JSON.parse(record.tags||'[]')" :key="tag">{{ tag }}</a-tag>
+          </a-space>
+        </template>
+        <!-- 图片信息 -->
+        <template v-else-if="column.dataIndex === 'picInfo'">
+            <div>图片格式：{{ record.picInfo?.pciFormat }}</div>
+            <div>图片宽度：{{ record.picInfo?.pciWidth }}</div>
+            <div>图片高度：{{ record.picInfo?.pciHeight }}</div>
+            <div>图片宽高比：{{ record.picInfo?.pciScale}}</div>
+            <div>图片大小：{{ (record.picInfo?.pciSize/1024).toFixed(2) }}KB</div>
         </template>
         <template v-else-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
+        <template v-else-if="column.dataIndex === 'editTime'">
+          {{ dayjs(record.editTime).format('YYYY-MM-DD HH:mm:ss') }}
+        </template>
         <template v-else-if="column.key === 'action'">
-          <a-button type="primary" @click="doEdit(record)" style="margin-right: 16px;">编辑</a-button>
+          <!-- <a-button type="primary" @click="doEdit(record)" style="margin-right: 16px;">编辑</a-button> -->
           <a-button danger @click="doDelete(record.id)">删除</a-button>
         </template>
       </template>

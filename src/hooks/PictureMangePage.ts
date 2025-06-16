@@ -62,9 +62,9 @@ const dataList = ref<any>([])
 const total = ref(0)
 
 // 搜索条件
-const searchParams = reactive<API.PictureQueryRequest>({
+const searchParams = reactive<any>({
   current: 1,
-  pageSize: 10,
+  pageSize: 4,
   sortField: 'createTime',
   sortOrder: 'descend',
 })
@@ -73,9 +73,10 @@ const searchParams = reactive<API.PictureQueryRequest>({
 const pagination = computed(() => {
   return {
     current: searchParams.current ?? 1,
-    pageSize: searchParams.pageSize ?? 10,
+    pageSize: searchParams.pageSize ?? 4,
     total: total.value,
     showSizeChanger: true,
+    pageSizeOptions: ['4', '10', '20', '50', '100'],
     showTotal: (total:any) => `共 ${total} 条`,
   }
 })
