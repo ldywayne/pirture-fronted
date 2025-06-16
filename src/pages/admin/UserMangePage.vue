@@ -15,14 +15,7 @@
       </a-form-item>
     </a-form>
     <a-table :columns="infoData.columns" :data-source="dataList" :pagination="pagination" @change="doTableChange">
-      <template #headerCell="{ column }">
-        <template v-if="column.key === 'name'">
-          <span>
-            <smile-outlined />
-            Name
-          </span>
-        </template>
-      </template>
+
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userAvatar'">
           <a-image :src="record.userAvatar" :width="120" />
@@ -48,11 +41,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { SmileOutlined } from '@ant-design/icons-vue'
+
 import UserMangePage from '@/hooks/UserMangePage'
 import dayjs from 'dayjs'
-import { message } from 'ant-design-vue';
+
 
 const { infoData, dataList, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit } = UserMangePage()
 

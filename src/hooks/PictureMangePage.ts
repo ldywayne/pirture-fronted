@@ -1,5 +1,5 @@
 import { reactive, ref, onMounted, computed } from 'vue';
-import { listUserVoByPageUsingPost, deleteUserUsingPost } from '@/api/userController';
+import { listPictureVoByPageUsingPost, listPictureByPageUsingPost, deletePictureUsingPost } from '@/api/pictureController';
 import { message } from 'ant-design-vue';
 
 export default function () {
@@ -37,7 +37,7 @@ export default function () {
       },
       {
         title: '用户 id',
-        dataIndex: 'userId',
+        dataIndex: 'pictureId',
         width: 80,
       },
       {
@@ -56,64 +56,75 @@ export default function () {
 
 
   })
-  // 数据
-  const dataList = ref<any>([])
-  const total = ref(0)
 
-  // 搜索条件
-  const searchParams = reactive<any>({
-    current: 1,
-    pageSize: 10,
-  })
+// 数据
+const dataList = ref<any>([])
+const total = ref(0)
 
-  // 获取数据
-  const fetchData = async () => {
-    const res = await listUserVoByPageUsingPost({
-      ...searchParams
-    })
-    if (res.data.data) {
-      dataList.value = res.data.data.records ?? []
-      total.value = Number(res.data.data.total) || 0
-    } else {
-      message.error('获取数据失败，' + res.data.message)
-    }
+// 搜索条件
+const searchParams = reactive<API.PictureQueryRequest>({
+  current: 1,
+  pageSize: 10,
+  sortField: 'createTime',
+  sortOrder: 'descend',
+})
+
+// 分页参数
+const pagination = computed(() => {
+  return {
+    current: searchParams.current ?? 1,
+    pageSize: searchParams.pageSize ?? 10,
+    total: total.value,
+    showSizeChanger: true,
+    showTotal: (total:any) => `共 ${total} 条`,
   }
-  //分页
-  // 分页参数
-  const pagination = computed(() => {
-    return {
-      current: searchParams.current ?? 1,
-      pageSize: searchParams.pageSize ?? 10,
-      total: total.value,
-      showSizeChanger: true,
-      showTotal: (total: any) => `共 ${total} 条`,
-    }
-  })
+})
 
-  // 获取数据
-  const doSearch = () => {
-    // 重置页码
-    searchParams.current = 1
-    fetchData()
+// 获取数据
+const fetchData = async () => {
+  const res = await listPictureByPageUsingPost({
+    ...searchParams,
+  })
+  if (res.data.data) {
+    dataList.value = res.data.data.records ?? []
+    total.value = res.data.data.total ?? 0
+  } else {
+    message.error('获取数据失败，' + res.data.message)
   }
+}
+
+// 页面加载时请求一次
+onMounted(() => {
+  fetchData()
+})
+
+// 获取数据
+const doSearch = () => {
+  // 重置搜索条件
+  searchParams.current = 1
+  fetchData()
+}
+
+// 表格变化处理
+const doTableChange = (page: any) => {
+  searchParams.current = page.current
+  searchParams.pageSize = page.pageSize
+  fetchData()
+}
+
   // 重置
   const doReset = () => {
-    searchParams.userAccount = ''
-    searchParams.userName = ''
+    searchParams.name = ''
+    searchParams.category = ''
     doSearch()
   }
-  // 表格变化处理
-  const doTableChange = (page: any) => {
-    searchParams.current = page.current
-    searchParams.pageSize = page.pageSize
-    fetchData()
-  }
+
   // 编辑
   const doEdit = async (record: any) => {
     if (!record) {
       return
     }
-    message.info('编辑用户：' + record.userName)
+    message.info('编辑用户：' + record.pictureName)
   }
 
   // 删除数据
@@ -121,7 +132,7 @@ export default function () {
     if (!id) {
       return
     }
-    const res = await deleteUserUsingPost({ id: Number(id) })
+    const res = await deletePictureUsingPost({ id: Number(id) })
     if (res.data.code === 0) {
       message.success('删除成功')
       // 刷新数据

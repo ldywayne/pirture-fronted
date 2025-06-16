@@ -1,11 +1,11 @@
 <template>
   <div id="homePage">
     <a-form layout="inline" :model="searchParams" @finish="doSearch" style="margin-bottom: 16px;">
-      <a-form-item label="账号">
-        <a-input v-model:value="searchParams.pictureAccount" placeholder="输入账号" />
+      <a-form-item label="名称">
+        <a-input v-model:value="searchParams.name" placeholder="输入名称" />
       </a-form-item>
-      <a-form-item label="用户名">
-        <a-input v-model:value="searchParams.pictureName" placeholder="输入用户名" />
+      <a-form-item label="类型">
+        <a-input v-model:value="searchParams.category" placeholder="输入类型" />
       </a-form-item>
       <a-form-item>
         <a-space>
@@ -15,14 +15,7 @@
       </a-form-item>
     </a-form>
     <a-table :columns="infoData.columns" :data-source="dataList" :pagination="pagination" @change="doTableChange">
-      <template #headerCell="{ column }">
-        <template v-if="column.key === 'name'">
-          <span>
-            <smile-outlined />
-            Name
-          </span>
-        </template>
-      </template>
+
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'pictureAvatar'">
           <a-image :src="record.pictureAvatar" :width="120" />
@@ -48,11 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { SmileOutlined } from '@ant-design/icons-vue'
+
 import PictureMangePage from '@/hooks/PictureMangePage'
 import dayjs from 'dayjs'
-import { message } from 'ant-design-vue';
 
 const { infoData, dataList, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit } = PictureMangePage()
 
