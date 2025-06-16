@@ -6,51 +6,64 @@ export default function () {
   const infoData = reactive({
      columns : [
       {
-        title: 'id',
+        title: 'ID',
         dataIndex: 'id',
-        width: 80,
+        width: 60,
       },
       {
         title: '图片',
         dataIndex: 'url',
+        width: 140,
       },
       {
         title: '名称',
         dataIndex: 'name',
+        width: 120,
+        ellipsis: true,
       },
       {
         title: '简介',
         dataIndex: 'introduction',
+        width: 150,
         ellipsis: true,
       },
       {
         title: '类型',
         dataIndex: 'category',
+        width: 80,
       },
       {
         title: '标签',
         dataIndex: 'tags',
+        width: 120,
+        ellipsis: true,
       },
       {
         title: '图片信息',
         dataIndex: 'picInfo',
+        width: 180,
       },
       {
-        title: '用户 id',
-        dataIndex: 'pictureId',
-        width: 80,
+        title: '用户ID',
+        dataIndex: 'userId',
+        width: 70,
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
+        width: 120,
       },
       {
         title: '编辑时间',
         dataIndex: 'editTime',
+        width: 120,
       },
       {
         title: '操作',
         key: 'action',
+        width: 120,
+        // margin: '0 auto',
+        fixed: 'right',
       },
     ]
 
@@ -88,7 +101,7 @@ const fetchData = async () => {
   })
   if (res.data.data) {
     dataList.value = res.data.data.records ?? []
-    total.value = res.data.data.total ?? 0
+    total.value = Number(res.data.data.total) || 0
   } else {
     message.error('获取数据失败，' + res.data.message)
   }
