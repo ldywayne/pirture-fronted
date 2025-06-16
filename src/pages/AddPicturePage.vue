@@ -77,6 +77,7 @@ const handleSubmit = async (values: any) => {
 
   if(res.data.code===0&&res.data.data) {
     message.success('图片创建成功');
+    //跳转到详情页
     router.push({
       path: `/picture/${pictureId}`,
       query: {
@@ -109,7 +110,7 @@ const getTagCategoryOptions = async ()=>{
 // const oldPicture=ref<any>(null);
 
 const route=useRoute();
-
+//获取老数据
 const getOldPicture=async ()=>{
   const id = route.query?.id;
   if(id){

@@ -1,6 +1,7 @@
 import { reactive, ref, onMounted, computed } from 'vue';
-import { listPictureVoByPageUsingPost, listPictureByPageUsingPost, deletePictureUsingPost } from '@/api/pictureController';
+import { listPictureVoByPageUsingPost, listPictureByPageUsingPost, deletePictureUsingPost, doPictureReviewUsingPost } from '@/api/pictureController';
 import { message } from 'ant-design-vue';
+import { PIC_REVIEW_STATUS_ENUM } from '@/constants/picture';
 
 export default function () {
   const infoData = reactive({
@@ -56,6 +57,11 @@ export default function () {
       {
         title: '编辑时间',
         dataIndex: 'editTime',
+        width: 120,
+      },
+      {
+        title: '审核信息',
+        dataIndex: 'reviewMessage',
         width: 120,
       },
       {
@@ -155,6 +161,22 @@ const doTableChange = (page: any) => {
       message.error('删除失败')
     }
   }
+  const handleReview = async (record: API.Picture, reviewStatus: number) => {
+    const reviewMessage = reviewStatus === PIC_REVIEW_STATUS_ENUM.PASS ? '管理员操作通过' : '管理员操作拒绝'
+    const res = await doPictureReviewUsingPost({
+      id: record.id,
+      reviewStatus,
+      reviewMessage,
+    })
+    if (res.data.code === 0) {
+      message.success('审核操作成功')
+      // 重新获取列表
+      fetchData()
+    } else {
+      message.error('审核操作失败，' + res.data.message)
+    }
+  }
+
 
 
   // 页面加载时请求一次
@@ -162,5 +184,5 @@ const doTableChange = (page: any) => {
     fetchData()
   })
 
-  return { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit }
+  return { infoData, dataList, total, fetchData, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit,handleReview  }
 }

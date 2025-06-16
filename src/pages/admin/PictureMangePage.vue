@@ -42,18 +42,36 @@
           <div>图片宽高比：{{ record.picScale }}</div>
           <div>图片大小：{{ (record.picSize / 1024).toFixed(2) }}KB</div>
         </template>
+            <!-- 审核信息 -->
+            <template v-if="column.dataIndex === 'reviewMessage'">
+          <div>审核状态：{{ PIC_REVIEW_STATUS_MAP[record.reviewStatus] }}</div>
+          <div>审核信息：{{ record.reviewMessage }}</div>
+          <div>审核人：{{ record.reviewerId }}</div>
+        </template>
         <template v-else-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
         <template v-else-if="column.dataIndex === 'editTime'">
           {{ dayjs(record.editTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
+
+
         <template v-else-if="column.key === 'action'">
-          <a-space>
-            <a-button type="link" :href="`/add_picture?id=${record.id}`" target="_blank">编辑</a-button>
+          <a-space wrap>
+            <a-button v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.PASS" type="link"
+              @click="handleReview(record, PIC_REVIEW_STATUS_ENUM.PASS)">
+              通过
+            </a-button>
+            <a-button v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.REJECT" type="link" danger
+              @click="handleReview(record, PIC_REVIEW_STATUS_ENUM.REJECT)">
+              拒绝
+            </a-button>
+            <a-button type="link" :href="`/add_picture?id=${record.id}`" target="_blank">编辑
+            </a-button>
             <a-button type="link" danger @click="doDelete(record.id)">删除</a-button>
           </a-space>
         </template>
+
       </template>
     </a-table>
   </div>
@@ -63,8 +81,10 @@
 
 import PictureMangePage from '@/hooks/PictureMangePage'
 import dayjs from 'dayjs'
+import { PIC_REVIEW_STATUS_MAP, PIC_REVIEW_STATUS_ENUM } from '@/constants/picture';
 
-const { infoData, dataList, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit } = PictureMangePage()
+
+const { infoData, dataList, searchParams, doTableChange, pagination, doSearch, doReset, doDelete, doEdit, handleReview } = PictureMangePage()
 
 </script>
 
