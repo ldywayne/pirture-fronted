@@ -1,23 +1,25 @@
 <template>
-
   <div id="globalHeader">
     <a-row :wrap="false">
       <a-col flex="200px">
         <Router-Link to="/">
           <div class="title-bar">
-            <img class="logo" src="../assets/logo.svg" alt="logo">
+            <img class="logo" src="../assets/logo.svg" alt="logo" />
             <div class="title">云图库</div>
           </div>
         </Router-Link>
       </a-col>
 
       <a-col flex="auto">
-        <a-menu v-model:selectedKeys="current" mode="horizontal" :items="items" @click="doMenuClick" />
+        <a-menu
+          v-model:selectedKeys="current"
+          mode="horizontal"
+          :items="items"
+          @click="doMenuClick"
+        />
       </a-col>
-
       <a-col flex="120px">
         <div class="user-login-status">
-
           <div v-if="loginUserLogin.loginUser.id">
             <a-dropdown>
               <ASpace>
@@ -38,25 +40,19 @@
               </template>
             </a-dropdown>
           </div>
-
           <div v-else>
             <a-button type="primary" href="/user/login">登录</a-button>
           </div>
-
         </div>
       </a-col>
     </a-row>
-
-
-
   </div>
-
 </template>
 <script lang="ts" setup>
 import { h, ref, computed } from 'vue'
 import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
-import type { MenuProps } from 'ant-design-vue';
-import { useRouter } from 'vue-router';
+import type { MenuProps } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/userLoginUserStore.ts'
 import { message } from 'ant-design-vue'
 import { userLogoutUsingPost } from '@/api/userController.ts'
@@ -96,7 +92,7 @@ const filterMenus = (menus = [] as MenuProps['items']) => {
   return menus?.filter((menu) => {
     if (typeof menu?.key === 'string' && menu.key.startsWith('/admin')) {
       const loginUser = loginUserLogin.loginUser
-      if (!loginUser || loginUser.userRole !== "admin") {
+      if (!loginUser || loginUser.userRole !== 'admin') {
         return false
       }
     }
@@ -107,25 +103,23 @@ const filterMenus = (menus = [] as MenuProps['items']) => {
 // 展示在菜单的路由数组
 const items = computed<MenuProps['items']>(() => filterMenus(originItems))
 
-
-
-const router = useRouter();
+const router = useRouter()
 // 路由跳转事件
 const doMenuClick = ({ key }: { key: string }) => {
   router.push({
     path: key,
-  });
-};
+  })
+}
 // 当前选中菜单
-const current = ref<string[]>([]);
+const current = ref<string[]>([])
 // 监听路由变化，更新当前选中菜单
 router.afterEach((to, from, next) => {
-  current.value = [to.path];
-});
+  current.value = [to.path]
+})
 
 const doLogout = async () => {
   const res = await userLogoutUsingPost()
-  console.log(res);
+  console.log(res)
 
   if (res.data.code === 0) {
     loginUserLogin.setLoginUser({
