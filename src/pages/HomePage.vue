@@ -3,8 +3,14 @@
     <!-- 搜索 -->
     <!-- 搜索框 -->
     <div class="search-bar">
-      <a-input-search placeholder="从海量图片中搜索" v-model:value="searchParams.searchText" enter-button="搜索" size="large"
-        @search="doSearch" allow-clear />
+      <a-input-search
+        placeholder="从海量图片中搜索"
+        v-model:value="searchParams.searchText"
+        enter-button="搜索"
+        size="large"
+        @search="doSearch"
+        allow-clear
+      />
     </div>
     <!-- 分类 + 标签 -->
     <a-tabs v-model:activeKey="selectedCategory" @change="doSearch">
@@ -14,24 +20,36 @@
     <div class="tag-bar">
       <span style="margin-right: 8px">标签：</span>
       <a-space :size="[0, 8]" wrap>
-        <a-checkable-tag v-for="(tag, index) in tagList" :key="tag" v-model:checked="selectedTagList[index]"
-          @change="doSearch">
+        <a-checkable-tag
+          v-for="(tag, index) in tagList"
+          :key="tag"
+          v-model:checked="selectedTagList[index]"
+          @change="doSearch"
+        >
           {{ tag }}
         </a-checkable-tag>
       </a-space>
     </div>
 
     <!-- 图片列表 -->
-    <a-list :grid="{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }" :data-source="dataList"
-      :pagination="pagination" :loading="loading">
+    <a-list
+      :grid="{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6 }"
+      :data-source="dataList"
+      :pagination="pagination"
+      :loading="loading"
+    >
       <template #renderItem="{ item: picture }">
         <a-list-item style="padding: 0">
           <!-- 单张图片 -->
-          <!-- 单张图片 -->
           <a-card hoverable @click="doClickPicture(picture)">
-
             <template #cover>
-              <img style="height: 180px; object-fit: cover" :alt="picture.name" :src="picture.url" />
+              <img
+                style="height: 180px; object-fit: cover"
+                :alt="picture.name"
+                :src="picture.thumbnailUrl ?? picture.url"
+                loading="lazy"
+              />
+              <!-- <img style="height: 180px; object-fit: cover" :alt="picture.name" :src="picture.url" /> -->
             </template>
             <a-card-meta :title="picture.name">
               <template #description>
@@ -47,16 +65,25 @@
             </a-card-meta>
           </a-card>
         </a-list-item>
-
       </template>
     </a-list>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import HomePage from '@/hooks/HomePage';
-const { dataList, pagination, loading, searchParams, doSearch,categoryList,selectedCategory,tagList,selectedTagList,doClickPicture } = HomePage();
+import HomePage from '@/hooks/HomePage'
+const {
+  dataList,
+  pagination,
+  loading,
+  searchParams,
+  doSearch,
+  categoryList,
+  selectedCategory,
+  tagList,
+  selectedTagList,
+  doClickPicture,
+} = HomePage()
 </script>
 
 <style scoped>
